@@ -51,20 +51,24 @@ Here's the head of the cleaned DataFrame (showing only the columns relevant to m
 
 <iframe src="response_rate_bar.html" width="800" height="600" frameborder="0"></iframe>
 
-The chart above shows how often hotels respond to reviews. About 26% of reviews get a response — meaningful, but most reviews go unanswered, which is exactly the engagement gap I'm interested in.
+*Univariate plot:* About 51k reviews got no response and only ~17k got one — so roughly 26% of hotel reviews receive a business response.
 
 <iframe src="response_delay.html" width="800" height="600" frameborder="0"></iframe>
 
-This one shows how quickly businesses respond when they do. Most responses come within a few weeks, with a long tail of much later responses.
+*Univariate plot:* The vast majority of responses come within the first few days, with a long tail of slower replies. Most hotels that do engage do so quickly.
+
+<iframe src="rating_distribution.html" width="800" height="600" frameborder="0"></iframe>
+
+*Univariate plot:* Most reviews are 4 or 5 stars — Hawaiian hotels generally rate well, with relatively few 1- and 2-star reviews.
 
 <iframe src="response_vs_rating_scatter.html" width="800" height="600" frameborder="0"></iframe>
 
+*Bivariate plot:* Each dot is a hotel, sized by review count. There's a very slight positive trend — hotels with higher response rates tend to rate marginally higher, but the relationship is weak.
 
-Each point is a hotel — x-axis is its response rate, y-axis is its average rating. There's a slight upward trend, suggesting hotels that respond more tend to have higher ratings.
+<iframe src="rating_by_responded.html" width="800" height="600" frameborder="0"></iframe>
 
-<iframe src="rating_by_responded_box.html" width="800" height="600" frameborder="0"></iframe>
+*Bivariate plot:* The box plots for reviews with and without a response look nearly identical at first glance — both have a median around 5 with the bulk of ratings between 4 and 5, and a few low-rating outliers at 1 and 2. Even though the hypothesis test later picks up a small but significant difference in means, visually the two groups overlap heavily, showing that response status doesn't dramatically reshape the rating distribution.
 
-This box plot compares the rating distribution of reviews that got a response versus reviews that didn't. Reviews with a response tend to skew slightly lower — likely because businesses prioritize replying to negative feedback to manage their reputation.
 
 | primary_category     | mean_rating | response_rate | review_count |
 | -------------------- | ----------- | ------------- | ------------ |
@@ -101,7 +105,7 @@ At a significance level of 0.05, I reject the null hypothesis. Missingness of `r
 
 <iframe src="missingness_rating.html" width="800" height="600" frameborder="0"></iframe>
 
-The plot above shows the difference clearly — reviews with no response skew slightly higher in rating compared to reviews where the business did respond.
+*Missingness plot:* The two distributions look very similar visually, but with the large sample size, even small differences are statistically significant — reviews without a response skew slightly more toward 4 stars, while reviews with a response skew slightly toward 3 stars.
 
 **Test 2: Does `resp` missingness depend on the day of the week the review was posted?**
 
