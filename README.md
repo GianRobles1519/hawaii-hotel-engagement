@@ -194,3 +194,24 @@ Compared to the baseline:
 
 The final model is a small but real improvement over the baseline. Both train and test RMSE went down, and the gap between them stayed reasonable, so I'm not overfitting. The added features capture aspects of hotel engagement (how fast they respond, how much they say, what kind of place they are) that a simple two-feature baseline doesn't pick up on.
 
+
+## 8. Fairness Analysis
+
+To assess the fairness of my final model, I wanted to see whether it predicts ratings more accurately for one type of hotel than another. Since my whole project is about customer engagement, the natural split is between hotels that engage with reviews and hotels that don't.
+
+- **Group X (engaged):** Hotels with a response rate above the median.
+- **Group Y (disengaged):** Hotels with a response rate at or below the median.
+- **Evaluation Metric:** RMSE (since this is a regression model).
+
+If the model predicts much better for engaged hotels, that would actually be a real fairness problem — disengaged hotel owners (who arguably need predictions the most) would get worse predictions than already-engaged ones.
+
+- **Null Hypothesis:** My model is fair. Its RMSE for engaged hotels and disengaged hotels is roughly the same, and any difference is due to random chance.
+- **Alternative Hypothesis:** My model is unfair. Its RMSE differs between engaged and disengaged hotels.
+- **Test Statistic:** Difference in RMSE between the two groups (engaged − disengaged).
+- **Significance Level:** 0.05
+- **Method:** Permutation test (1,000 iterations), two-sided.
+- **Observed Difference:** ~0.067
+- **p-value:** 0.263
+
+At a significance level of 0.05, I fail to reject the null hypothesis. The observed RMSE difference of about 0.067 between engaged and disengaged hotels is not statistically significant — it could easily be due to random chance from how the data got split. This suggests my model is reasonably **fair** — it doesn't systematically perform worse for hotels that don't actively engage with customer reviews compared to those that do. That's actually a good outcome for the practical use of this model, since disengaged hotel owners (who could potentially benefit the most from rating predictions) would get predictions of roughly the same quality as more engaged ones.
+
