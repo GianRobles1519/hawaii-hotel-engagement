@@ -27,19 +27,19 @@ I'm using a dataset of Google Maps reviews for businesses in Hawaii from [this p
 | `num_of_reviews`  | How many total reviews the hotel has                        |
 
 
-| primary_category     | mean_rating | response_rate | review_count |
-| -------------------- | ----------- | ------------- | ------------ |
-| Hotel                | 4.35        | 0.23          | 45,640       |
-| Resort hotel         | 4.46        | 0.32          | 19,000       |
-| Lodge                | 4.23        | 0.30          | 833          |
-| Condominium complex  | 4.56        | 0.11          | 784          |
-| Golf course          | 4.42        | 0.55          | 645          |
-| Hostel               | 4.13        | 0.14          | 621          |
-| Bed & breakfast      | 4.46        | 0.44          | 376          |
-| Indoor lodging       | 4.36        | 0.09          | 321          |
-| Lodging              | 4.32        | 0.00          | 168          |
-| Inn                  | 4.38        | 0.40          | 144          |
+## Data Cleaning and Exploratory Data Analysis
 
+The first thing I did was load both JSON files (the reviews and the business metadata) and merge them on `gmap_id`. I used an inner merge so I'd only end up with reviews that actually had business info, and vice versa — no orphan rows.
+
+After the merge there were duplicate column names like `name_x` and `name_y` from both DataFrames, so I renamed them to `Business_Name`, `Reviewer_Name`, `Review_Time`, and `Review_Rating` so it'd be easier to keep track of what was what.
+
+Next I filtered down to only hotels. The `category` column is a list of tags per business (a hotel might be tagged as `["Resort hotel", "Lodging", "Wedding venue"]`), so I exploded the column to get all the unique tags, picked the ones that looked like accommodations (Hotel, Resort hotel, Motel, Inn, Extended stay hotel, Hostel, Bed & breakfast, Lodge, Lodging, Boarding house, Travellers lodge), and kept any business whose category list contained at least one of those. This filter alone dropped the dataset from about 1.5 million rows down to 68,996 — Hawaii has way more restaurants and other small businesses than hotels.
+
+Then I cleaned up the time columns. `Review_Time` came as a Unix timestamp in milliseconds, so I converted it to a real datetime. The `resp` column was a nested dictionary with a time and a text field for the business's response (or `NaN` if there was no response). I pulled both pieces out into two new columns: `Resp_Time` and `Respond Comment`. I made sure to leave the `NaN` values alone since whether a business responded or not is literally the thing I'm trying to study — replacing them with 0 or anything else would destroy that signal.
+
+Finally I dropped a bunch of columns I wasn't going to use (`pics`, `url`, `relative_results`, `description`, `hours`, `MISC`, `resp`) just to keep the DataFrame readable.
+
+Here's the head of the cleaned DataFrame (showing only the columns relevant to my analysis):
 
 | Business_Name  | Review_Time         | Review_Rating | avg_rating | num_of_reviews | Resp_Time | Respond Comment |
 | -------------- | ------------------- | ------------- | ---------- | -------------- | --------- | --------------- |
@@ -48,11 +48,6 @@ I'm using a dataset of Google Maps reviews for businesses in Hawaii from [this p
 | Hickam Lodging | 2020-02-15 21:57:11 | 4             | 3.8        | 48             | NaT       | NaN             |
 | Hickam Lodging | 2019-09-07 20:20:29 | 4             | 3.8        | 48             | NaT       | NaN             |
 | Hickam Lodging | 2019-10-15 06:02:18 | 4             | 3.8        | 48             | NaT       | NaN             |
-
-
-
-
-
 
 
 
