@@ -163,3 +163,34 @@ My baseline model's performance:
 A test RMSE of about 0.34 means the model is off by roughly a third of a star on average for predicting `avg_rating`. For a baseline that only uses two features, this is a reasonable starting point — the model isn't overfitting (test RMSE is actually slightly *lower* than train RMSE, which usually means good generalization), but there's still plenty of room to improve. I wouldn't say this baseline is "good" in any final sense — it's missing a lot of the engagement-specific features (response delay, response text length, accommodation type) that I think will actually matter for predicting ratings. That's what I'll address in the final model.
 
 
+
+## 7. Final Model
+
+For my final model I stuck with **Linear Regression** but added three new engineered features on top of the baseline:
+
+- `avg_response_delay` (quantitative): the average number of days between a customer's review and the hotel's reply. Hotels that reply quickly are probably more attentive to customer feedback overall, which should correlate with better service and higher ratings.
+- `avg_response_length` (quantitative): the average character length of the hotel's responses. Longer responses suggest a hotel is putting genuine effort into engagement — copy-pasting a one-line "Thank you!" is different from a real, personalized reply.
+- `primary_category` (nominal): the first tag from each business's `category` list, encoded with `OneHotEncoder`. The kind of accommodation matters — Resort hotels, Bed & breakfasts, and Hostels operate very differently and probably get rated differently by customers.
+
+For hotels that never responded, the `avg_response_delay` and `avg_response_length` ended up as `NaN`. I filled those with 0 since those hotels also have a response rate of 0, so the model can pick up that "no engagement" pattern across the features together.
+
+Since `LinearRegression` doesn't really have hyperparameters to tune in the traditional sense, I went with the **manual iterative search** option that the project spec allows. I tried four different feature subsets in order, each one adding a new engineered feature on top of the previous, and compared their Test RMSE to see which combination helped the most:
+
+| Feature Set       | Train RMSE | Test RMSE |
+| ----------------- | ---------- | --------- |
+| Baseline (2 feats)| 0.3702     | 0.3440    |
+| + delay           | 0.3701     | 0.3447    |
+| + length          | 0.3683     | 0.3397    |
+| + category        | 0.3366     | 0.3399    |
+
+Based on this search I picked the **"+ category"** feature set as my final model — it has the lowest training RMSE (0.3366), the test RMSE is essentially tied with "+ length" (0.3399 vs 0.3397), and it uses the most features including the one-hot encoded categorical feature that demonstrates the encoding step. My final model has 5 features total (2 from baseline + 3 engineered), uses LinearRegression, and was fit in a single sklearn Pipeline.
+
+Compared to the baseline:
+
+| Metric     | Baseline | Final  | Improvement |
+| ---------- | -------- | ------ | ----------- |
+| Train RMSE | 0.3702   | 0.3366 | 0.0336      |
+| Test RMSE  | 0.3440   | 0.3399 | 0.0041      |
+
+The final model is a small but real improvement over the baseline. Both train and test RMSE went down, and the gap between them stayed reasonable, so I'm not overfitting. The added features capture aspects of hotel engagement (how fast they respond, how much they say, what kind of place they are) that a simple two-feature baseline doesn't pick up on.
+
