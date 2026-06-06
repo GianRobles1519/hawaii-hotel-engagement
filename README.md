@@ -132,3 +132,12 @@ At a significance level of 0.05, I reject the null hypothesis. The p-value of 0.
 
 That said, this is a correlational result — not a causal one. It doesn't *prove* that responding to reviews makes ratings go up. It's possible that hotels which respond a lot are also just better-managed in general, so they'd already have higher ratings regardless of whether they engaged with reviews or not.
 
+
+
+## Framing a Prediction Problem
+
+For my prediction problem I'm predicting a hotel's average rating (`avg_rating`), which makes this a regression problem since the target is a continuous value between 1.0 and 5.0. All of my features are aggregated to the hotel level and describe how the hotel behaves — not its outcomes — so I avoid data leakage. The features I'm using are the hotel's response rate (how often it replies to reviews), its average response delay (how long it takes to reply), the average length of its responses, the total number of reviews it has, and its primary accommodation category (Hotel, Resort hotel, Motel, etc.). All of this information would be known at the time of prediction since it's based on how the hotel operates, not on the ratings themselves.
+
+For my evaluation metric I'm using **RMSE** (Root Mean Squared Error). I chose it because my target is continuous and on a small scale (1.0 to 5.0), so I wanted a metric that penalizes large prediction errors more than small ones and stays in the same units as the original ratings. RMSE is intuitive to interpret — an RMSE of 0.34 means my model is off by about 0.34 stars on average. I considered using R² but it doesn't have units and felt less directly meaningful for someone trying to interpret how good a rating prediction actually is.
+
+
