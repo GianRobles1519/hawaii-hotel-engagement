@@ -81,4 +81,54 @@ This box plot compares the rating distribution of reviews that got a response ve
 Looking at this, most of the reviews are for regular Hotels and Resort hotels. Resort hotels actually have a higher mean rating (4.46) and higher response rate (32%) than regular hotels (4.35 / 23%), so the bigger more expensive places tend to engage more with their reviews — which sort of makes sense since they have the staff and brand reasons to do it. Bed & breakfasts also stand out with one of the highest response rates (44%) since they're usually smaller and more personal places.
 
 
+## Assessment of Missingness
+
+I think the `text` column (the actual written review left by the customer) in this dataset is likely **NMAR**. Whether or not someone writes text along with their star rating depends on how strongly they feel about their stay — and that's exactly the information the missing text would have contained. People who feel meh about a hotel might just leave a 3 or 4 star rating and skip writing anything, while people who felt really strongly (good or bad) are more likely to actually type out a review. So the missingness depends on what the text would have said if it were there — that's the definition of NMAR. If I had additional data like how long the reviewer spent on the review page, how many reviews they've left in the past in general, or whether they were prompted by Google to write text, I could probably explain the missingness through observable behavior and reclassify it as MAR.
+
+For my permutation tests I looked at the missingness of the `resp` column (whether the business responded), since that's the column central to my whole question — and about 74% of reviews don't have a response.
+
+**Test 1: Does `resp` missingness depend on `Review_Rating`?**
+
+- **Null:** The distribution of review ratings is the same whether the business responded or not.
+- **Alternative:** The distributions are different.
+- **Test statistic:** Difference in mean rating between reviews with a response missing vs. not missing.
+- **Method:** Permutation test (1,000 iterations).
+- **Observed difference:** ~0.036
+- **p-value:** 0.000
+
+At a significance level of 0.05, I reject the null hypothesis. Missingness of `resp` does depend on the review's star rating. Interestingly, reviews *without* a response actually have slightly *higher* ratings on average, which means businesses are more likely to respond to lower-rated reviews — probably because they want to manage their reputation when something bad gets posted. This makes the `resp` missingness **MAR** with respect to `Review_Rating`.
+
+<iframe src="missingness_rating.html" width="800" height="600" frameborder="0"></iframe>
+
+The plot above shows the difference clearly — reviews with no response skew slightly higher in rating compared to reviews where the business did respond.
+
+**Test 2: Does `resp` missingness depend on the day of the week the review was posted?**
+
+- **Null:** The day-of-week distribution is the same whether the response is missing or not.
+- **Alternative:** The distributions are different.
+- **Test statistic:** Total Variation Distance (TVD) between the two day-of-week distributions.
+- **Method:** Permutation test (1,000 iterations).
+- **Observed TVD:** ~0.012
+- **p-value:** 0.114
+
+At a significance level of 0.05, I fail to reject the null hypothesis. There's no significant relationship between the day a review was posted and whether the business responded to it. That makes sense — there's no real reason a hotel would systematically skip responding to reviews posted on, say, Wednesdays vs. Saturdays.
+
+
+
+
+## Hypothesis Testing
+
+To follow up on the missingness analysis, I wanted to actually test whether hotels that engage with reviews tend to have higher ratings than hotels that don't. To do this I aggregated my data up to the hotel level — one row per `gmap_id` — with each hotel's `response_rate` (the proportion of its reviews it replied to) and its `mean_rating`. Then I labeled each hotel as a "responder" if its response rate was at or above 50%, and a "non-responder" otherwise. That gave me 56 responder hotels and 273 non-responder hotels.
+
+- **Null Hypothesis:** Among Hawaiian hotels, the average rating of hotels that respond to customer reviews is the same as the average rating of hotels that don't. Any observed difference is due to random chance.
+- **Alternative Hypothesis:** Hawaiian hotels that respond to customer reviews have a higher average rating than hotels that don't.
+- **Test Statistic:** Difference in mean rating between responder hotels and non-responder hotels (responders − non-responders).
+- **Significance Level:** 0.05
+- **Method:** Permutation test (1,000 iterations).
+- **Observed Difference:** ~0.086
+- **p-value:** 0.04
+
+At a significance level of 0.05, I reject the null hypothesis. The p-value of 0.04 suggests that the observed difference in mean ratings (about 0.086 stars) is unlikely to have happened by chance alone. This gives evidence that Hawaiian hotels that actually respond to customer reviews tend to have higher average ratings than hotels that don't.
+
+That said, this is a correlational result — not a causal one. It doesn't *prove* that responding to reviews makes ratings go up. It's possible that hotels which respond a lot are also just better-managed in general, so they'd already have higher ratings regardless of whether they engaged with reviews or not.
 
