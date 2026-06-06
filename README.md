@@ -59,6 +59,7 @@ This one shows how quickly businesses respond when they do. Most responses come 
 
 <iframe src="response_vs_rating_scatter.html" width="800" height="600" frameborder="0"></iframe>
 
+
 Each point is a hotel — x-axis is its response rate, y-axis is its average rating. There's a slight upward trend, suggesting hotels that respond more tend to have higher ratings.
 
 <iframe src="rating_by_responded_box.html" width="800" height="600" frameborder="0"></iframe>
