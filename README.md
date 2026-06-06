@@ -49,5 +49,36 @@ Here's the head of the cleaned DataFrame (showing only the columns relevant to m
 | Hickam Lodging | 2019-09-07 20:20:29 | 4             | 3.8        | 48             | NaT       | NaN             |
 | Hickam Lodging | 2019-10-15 06:02:18 | 4             | 3.8        | 48             | NaT       | NaN             |
 
+<iframe src="response_rate_bar.html" width="800" height="600" frameborder="0"></iframe>
+
+The chart above shows how often hotels respond to reviews. About 26% of reviews get a response — meaningful, but most reviews go unanswered, which is exactly the engagement gap I'm interested in.
+
+<iframe src="response_delay.html" width="800" height="600" frameborder="0"></iframe>
+
+This one shows how quickly businesses respond when they do. Most responses come within a few weeks, with a long tail of much later responses.
+
+<iframe src="response_vs_rating_scatter.html" width="800" height="600" frameborder="0"></iframe>
+
+Each point is a hotel — x-axis is its response rate, y-axis is its average rating. There's a slight upward trend, suggesting hotels that respond more tend to have higher ratings.
+
+<iframe src="rating_by_responded_box.html" width="800" height="600" frameborder="0"></iframe>
+
+This box plot compares the rating distribution of reviews that got a response versus reviews that didn't. Reviews with a response tend to skew slightly lower — likely because businesses prioritize replying to negative feedback to manage their reputation.
+
+| primary_category     | mean_rating | response_rate | review_count |
+| -------------------- | ----------- | ------------- | ------------ |
+| Hotel                | 4.35        | 0.23          | 45,640       |
+| Resort hotel         | 4.46        | 0.32          | 19,000       |
+| Lodge                | 4.23        | 0.30          | 833          |
+| Condominium complex  | 4.56        | 0.11          | 784          |
+| Golf course          | 4.42        | 0.55          | 645          |
+| Hostel               | 4.13        | 0.14          | 621          |
+| Bed & breakfast      | 4.46        | 0.44          | 376          |
+| Indoor lodging       | 4.36        | 0.09          | 321          |
+| Lodging              | 4.32        | 0.00          | 168          |
+| Inn                  | 4.38        | 0.40          | 144          |
+
+Looking at this, most of the reviews are for regular Hotels and Resort hotels. Resort hotels actually have a higher mean rating (4.46) and higher response rate (32%) than regular hotels (4.35 / 23%), so the bigger more expensive places tend to engage more with their reviews — which sort of makes sense since they have the staff and brand reasons to do it. Bed & breakfasts also stand out with one of the highest response rates (44%) since they're usually smaller and more personal places.
+
 
 
